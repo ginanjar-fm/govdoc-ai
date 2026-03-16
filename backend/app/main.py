@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import Base, engine
+from app.models import document as _models  # noqa: F401 — register models with Base
 from app.routers import documents, health
 
 

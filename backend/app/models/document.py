@@ -20,16 +20,26 @@ class Document(Base):
     uploaded_by = Column(String(100), default="api_user")
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    metadata_records = relationship("ExtractedMetadata", back_populates="document", cascade="all, delete-orphan")
-    analyses = relationship("AnalysisHistory", back_populates="document", cascade="all, delete-orphan")
-    audit_logs = relationship("AuditLog", back_populates="document", cascade="all, delete-orphan")
+    metadata_records = relationship(
+        "ExtractedMetadata", back_populates="document", cascade="all, delete-orphan"
+    )
+    analyses = relationship(
+        "AnalysisHistory", back_populates="document", cascade="all, delete-orphan"
+    )
+    audit_logs = relationship(
+        "AuditLog", back_populates="document", cascade="all, delete-orphan"
+    )
 
 
 class ExtractedMetadata(Base):
     __tablename__ = "extracted_metadata"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    document_id = Column(UUID(as_uuid=True), ForeignKey("documents.id", ondelete="CASCADE"), nullable=False)
+    document_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("documents.id", ondelete="CASCADE"),
+        nullable=False,
+    )
     classification = Column(String(100), nullable=True)
     summary = Column(Text, nullable=True)
     entities = Column(Text, nullable=True)  # JSON string
@@ -43,13 +53,20 @@ class AnalysisHistory(Base):
     __tablename__ = "analysis_history"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    document_id = Column(UUID(as_uuid=True), ForeignKey("documents.id", ondelete="CASCADE"), nullable=False)
+    document_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("documents.id", ondelete="CASCADE"),
+        nullable=False,
+    )
     analysis_type = Column(String(50), nullable=False)
     input_tokens = Column(Integer, default=0)
     output_tokens = Column(Integer, default=0)
     model_used = Column(String(100), nullable=True)
     duration_ms = Column(Integer, default=0)
-    status = Column(Enum("pending", "completed", "failed", name="analysis_status"), default="pending")
+    status = Column(
+        Enum("pending", "completed", "failed", name="analysis_status"),
+        default="pending",
+    )
     error_message = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
@@ -60,7 +77,11 @@ class AuditLog(Base):
     __tablename__ = "audit_logs"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    document_id = Column(UUID(as_uuid=True), ForeignKey("documents.id", ondelete="CASCADE"), nullable=True)
+    document_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("documents.id", ondelete="CASCADE"),
+        nullable=True,
+    )
     action = Column(String(100), nullable=False)
     actor = Column(String(100), default="api_user")
     details = Column(Text, nullable=True)

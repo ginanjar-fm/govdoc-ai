@@ -50,7 +50,10 @@ async def upload(
     if file.content_type not in ALLOWED_TYPES:
         raise HTTPException(
             status_code=400,
-            detail=f"File type '{file.content_type}' not allowed. Accepted: {', '.join(ALLOWED_TYPES)}",
+            detail=(
+                f"File type '{file.content_type}' not allowed."
+                f" Accepted: {', '.join(ALLOWED_TYPES)}"
+            ),
         )
 
     content = await file.read()
@@ -62,7 +65,11 @@ async def upload(
         )
 
     doc = await upload_document(db, content, file.filename or "unnamed", file.content_type)
-    return {"id": str(doc.id), "filename": doc.original_filename, "message": "Document uploaded successfully"}
+    return {
+        "id": str(doc.id),
+        "filename": doc.original_filename,
+        "message": "Document uploaded successfully",
+    }
 
 
 @router.post("/{document_id}/analyze")
@@ -83,7 +90,11 @@ async def analyze(
         "classification": metadata.classification,
         "summary": metadata.summary,
         "entities": json.loads(metadata.entities) if metadata.entities else [],
-        "compliance_flags": json.loads(metadata.compliance_flags) if metadata.compliance_flags else [],
+        "compliance_flags": (
+            json.loads(metadata.compliance_flags)
+            if metadata.compliance_flags
+            else []
+        ),
     }
 
 

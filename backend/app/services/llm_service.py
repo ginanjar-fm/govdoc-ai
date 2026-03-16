@@ -20,21 +20,28 @@ def chunk_text(text: str, chunk_size: int = CHUNK_SIZE) -> list[str]:
     return chunks
 
 
-ANALYSIS_PROMPT = """You are a government document analyst. Analyze the following document text and return a JSON response with these fields:
+ANALYSIS_PROMPT = (
+    "You are a government document analyst. Analyze the following"
+    " document text and return a JSON response with these fields:\n\n"
+    '1. "classification": One of: "policy", "regulation", "report",'
+    ' "memo", "legislation", "executive_order", "guidance",'
+    ' "correspondence", "other"\n'
+    '2. "summary": A 3-5 sentence summary of the document\n'
+    '3. "entities": An array of objects with "type" and "value"'
+    ' fields. Types: "date", "organization", "person",'
+    ' "reference", "obligation", "deadline"\n'
+    '4. "compliance_flags": An array of objects with "severity"'
+    ' ("high", "medium", "low") and "description" fields'
+    " for any potential compliance issues\n\n"
+    "Return ONLY valid JSON, no markdown formatting.\n\n"
+    "Document text:\n{text}"
+)
 
-1. "classification": One of: "policy", "regulation", "report", "memo", "legislation", "executive_order", "guidance", "correspondence", "other"
-2. "summary": A 3-5 sentence summary of the document
-3. "entities": An array of objects with "type" and "value" fields. Types: "date", "organization", "person", "reference", "obligation", "deadline"
-4. "compliance_flags": An array of objects with "severity" ("high", "medium", "low") and "description" fields for any potential compliance issues
-
-Return ONLY valid JSON, no markdown formatting.
-
-Document text:
-{text}"""
-
-CHUNK_SUMMARY_PROMPT = """Summarize this section of a government document concisely, preserving key entities, dates, obligations, and compliance-relevant details:
-
-{text}"""
+CHUNK_SUMMARY_PROMPT = (
+    "Summarize this section of a government document concisely,"
+    " preserving key entities, dates, obligations,"
+    " and compliance-relevant details:\n\n{text}"
+)
 
 
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
