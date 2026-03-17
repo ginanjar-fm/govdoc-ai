@@ -1,0 +1,39 @@
+databases:
+  - name: govdoc-ai-db
+    plan: free
+    databaseName: govdoc
+    user: postgres
+
+services:
+  - type: web
+    name: govdoc-ai-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: govdoc-ai-db
+          property: connectionString
+      - key: DATABASE_URL_SYNC
+        fromDatabase:
+          name: govdoc-ai-db
+          property: connectionString
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: API_KEY
+        generateValue: true
+      - key: CORS_ORIGINS
+        sync: false
+    healthCheckPath: /api/health
+
+  - type: web
+    name: govdoc-ai-frontend
+    runtime: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/dist
+    routes:
+      - type: rewrite
+        source: /api/*
+        destination: https://govdoc-ai-backend.onrender.com/api/*

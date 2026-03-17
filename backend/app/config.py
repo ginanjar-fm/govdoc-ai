@@ -1,3 +1,4 @@
+from pydantic import model_validator
 from pydantic_settings import BaseSettings
 
 
@@ -11,6 +12,23 @@ class Settings(BaseSettings):
     llm_model: str = "claude-sonnet-4-20250514"
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
+
+    @model_validator(mode="after")
+    def normalize_database_urls(self) -> "Settings":
+        """Ensure async URL uses asyncpg driver and sync URL uses plain postgresql."""
+        if self.database_url.startswith("postgres://"):
+            self.database_url = self.database_url.replace(
+                "postgres://", "postgresql+asyncpg://", 1
+            )
+        elif self.database_url.startswith("postgresql://"):
+            self.database_url = self.database_url.replace(
+                "postgresql://", "postgresql+asyncpg://", 1
+            )
+        if self.database_url_sync.startswith("postgres://"):
+            self.database_url_sync = self.database_url_sync.replace(
+                "postgres://", "postgresql://", 1
+            )
+        return self
 
 
 settings = Settings()
