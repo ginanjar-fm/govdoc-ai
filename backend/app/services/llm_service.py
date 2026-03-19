@@ -6,7 +6,10 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 
 from app.config import settings
 
-client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
+client = anthropic.Anthropic(
+    api_key=settings.anthropic_api_key,
+    base_url="https://openrouter.ai/api",
+)
 
 CHUNK_SIZE = 80000  # ~20k tokens worth of text
 
