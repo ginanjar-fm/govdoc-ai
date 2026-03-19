@@ -4,6 +4,8 @@ AI-powered government document processor. Upload PDFs or text files, and Claude 
 
 Built with FastAPI, React, PostgreSQL, and Anthropic Claude.
 
+![GovDoc AI Demo — upload, classify, summarize, and flag compliance issues](docs/demo.gif)
+
 ## Overview
 
 GovDoc AI automates the analysis of government documents — policies, regulations, memos, legislation, and more. Upload a document, click analyze, and within seconds you get a structured classification, a concise summary, extracted entities (organizations, dates, legal references), and compliance flags with severity ratings. The system handles large documents by chunking text and chaining summaries before final analysis.
